@@ -1,584 +1,174 @@
-Here is the complete System Design interview preparation roadmap, structured for an Android developer with 7 years of experience who is learning system design for the first time.
-
-You can save this as your master roadmap and use it to track your preparation.
-
-Writing
-
-# System Design Interview Preparation – Complete Roadmap
-
-**Target:** Android Developer with 7 Years of Experience\
-**Starting Level:** Beginner\
-**Goal:** Prepare for Mid-Level / Senior Android Developer Interviews\
-**Approach:** Learn concepts → Maintain notes → Understand diagrams → Practice interview questions → Design real-world applications.
-
----
-
-# PHASE 1: SYSTEM DESIGN FUNDAMENTALS
-
-**Duration: Week 1**
-
-Goal: Understand the basic building blocks of system design.
-
-### Day 1 – HLD vs LLD
-
-- What is System Design?
-- What is High-Level Design (HLD)?
-- What is Low-Level Design (LLD)?
-- Differences between HLD and LLD.
-- When do we use HLD and LLD?
-- Real-world examples.
-
-### Day 2 – Requirements Gathering
-
-- What are requirements?
-- Functional Requirements.
-- Non-Functional Requirements.
-- Functional vs Non-Functional Requirements.
-- How to gather requirements in interviews.
-- How to identify system boundaries.
-
-### Day 3 – System Design Fundamentals
-
-- Latency.
-- Throughput.
-- Scalability.
-- Availability.
-- Reliability.
-- Fault Tolerance.
-- Performance.
-- Consistency.
-- Bottlenecks.
-
-### Day 4 – Basic Architecture and Communication
-
-- Client-Server Architecture.
-- Monolithic Architecture.
-- Microservices Architecture.
-- REST APIs.
-- HTTP methods.
-- HTTP status codes.
-- WebSockets.
-- SQL vs NoSQL.
-- When to choose SQL or NoSQL.
-
-### Day 5 – Caching and Pagination
-
-- What is caching?
-- Why do we need caching?
-- Client-side caching.
-- Server-side caching.
-- Redis.
-- Cache-Aside Pattern.
-- Write-Through Cache.
-- Write-Back Cache.
-- Cache Invalidation.
-- Pagination.
-- Offset-based Pagination.
-- Cursor-based Pagination.
-
-### Day 6 – Complete Notes Application System Design
-
-- Requirement gathering.
-- HLD architecture.
-- LLD architecture.
-- Database schema.
-- API design.
-- Create Note flow.
-- Get Notes flow.
-- Update and Delete flows.
-- Caching.
-- Pagination.
-- Offline support.
-- Synchronization.
-- Scalability.
-- Security.
-
-### Day 7 – Revision and Practice
-
-- Revise Week 1 concepts.
-- Draw Notes application architecture.
-- Explain the complete architecture.
-- Practice interview questions.
-- Identify weak areas.
-
----
-
-# PHASE 2: SCALABILITY AND DISTRIBUTED SYSTEMS
-
-**Duration: Week 2**
-
-Goal: Understand how systems handle millions of users and requests.
-
-### Day 8 – Load Balancing
-
-- What is a Load Balancer?
-- Why do we need it?
-- Layer 4 vs Layer 7 Load Balancing.
-- Round Robin.
-- Least Connections.
-- Health Checks.
-- Load Balancer architecture.
-
-### Day 9 – Database Scaling
-
-- Database bottlenecks.
-- Vertical Scaling.
-- Horizontal Scaling.
-- Replication.
-- Primary-Replica Architecture.
-- Read Replicas.
-- Database Sharding.
-- Partitioning.
-- When to use replication vs sharding.
-
-### Day 10 – Distributed Systems Basics
-
-- What is a Distributed System?
-- Why do we need Distributed Systems?
-- Communication between services.
-- Network failures.
-- Partial failures.
-- Distributed System challenges.
-- CAP Theorem.
-- Consistency vs Availability.
-
-### Day 11 – Message Queues
-
-- What is a Message Queue?
-- Why do we need asynchronous processing?
-- Synchronous vs Asynchronous communication.
-- Producers and Consumers.
-- Kafka basics.
-- RabbitMQ basics.
-- Event-driven architecture.
-- Retry mechanisms.
-- Dead Letter Queue (DLQ).
-
-### Day 12 – Consistency and Reliability
-
-- Strong Consistency.
-- Eventual Consistency.
-- Consistency models.
-- ACID properties.
-- BASE properties.
-- Transactions.
-- Distributed Transactions.
-- Idempotency.
-- Fault Tolerance.
-
-### Day 13 – API Design and Rate Limiting
-
-- API Design Best Practices.
-- REST API versioning.
-- Authentication.
-- Authorization.
-- JWT.
-- OAuth 2.0 basics.
-- Rate Limiting.
-- Token Bucket Algorithm.
-- Leaky Bucket Algorithm.
-- API Gateway.
-
-### Day 14 – Revision and Practice
-
-- Revise Week 2.
-- Draw load balancer architecture.
-- Explain database replication.
-- Explain message queue architecture.
-- Practice distributed system interview questions.
-
----
-
-# PHASE 3: ADVANCED SYSTEM DESIGN CONCEPTS
-
-**Duration: Week 3**
-
-Goal: Understand important architectural patterns used in large-scale applications.
-
-### Day 15 – Microservices Architecture
-
-- What are Microservices?
-- Monolithic vs Microservices.
-- Service Discovery.
-- API Gateway.
-- Inter-service Communication.
-- Service Isolation.
-- Advantages and Disadvantages.
-
-### Day 16 – Design Patterns in Distributed Systems
-
-- Circuit Breaker Pattern.
-- Retry Pattern.
-- Timeout Pattern.
-- Bulkhead Pattern.
-- Saga Pattern.
-- CQRS.
-- Event Sourcing.
-- When to use each pattern.
-
-### Day 17 – Storage and Data Management
-
-- SQL Database Internals (basics).
-- Indexing.
-- B-Tree.
-- Database Transactions.
-- Database Normalization.
-- Denormalization.
-- Blob Storage.
-- Object Storage.
-- CDN.
-- When to use different storage solutions.
-
-### Day 18 – Search and Notification Systems
-
-- Search System Architecture.
-- Full-Text Search.
-- Elasticsearch basics.
-- Notification System Design.
-- Push Notifications.
-- Firebase Cloud Messaging (FCM).
-- Email and SMS Notifications.
-- Notification Delivery and Retry.
-
-### Day 19 – Real-Time Systems
-
-- Polling.
-- Long Polling.
-- Server-Sent Events (SSE).
-- WebSockets.
-- Real-Time Communication.
-- Chat System Architecture.
-- Online/Offline Status.
-- Message Delivery and Acknowledgement.
-
-### Day 20 – Security and Observability
-
-- HTTPS.
-- Encryption.
-- Authentication vs Authorization.
-- Access Tokens and Refresh Tokens.
-- Logging.
-- Monitoring.
-- Metrics.
-- Distributed Tracing.
-- Alerting.
-- System Health Checks.
-
-### Day 21 – Revision and Practice
-
-- Revise Week 3.
-- Explain Microservices.
-- Explain Circuit Breaker.
-- Explain CQRS.
-- Explain Notification Architecture.
-- Practice interview questions.
-
----
-
-# PHASE 4: ANDROID SYSTEM DESIGN
-
-**Duration: Week 4**
-
-Goal: Apply system design concepts to Android applications and prepare for Senior Android Developer interviews.
-
-### Day 22 – Android Application Architecture
-
-- MVC.
-- MVP.
-- MVVM.
-- MVI.
-- Clean Architecture.
-- SOLID Principles.
-- Dependency Injection.
-- Repository Pattern.
-- Use Cases.
-- Modularization.
-
-### Day 23 – Offline-First Architecture
-
-- Room Database.
-- Local Data Source.
-- Remote Data Source.
-- Repository.
-- Offline-First Approach.
-- WorkManager.
-- Background Synchronization.
-- Conflict Resolution.
-- Source of Truth.
-
-### Day 24 – Android Networking and API Architecture
-
-- Retrofit.
-- OkHttp.
-- Interceptors.
-- Network Error Handling.
-- Retry Mechanisms.
-- Token Refresh.
-- API Pagination.
-- Network Caching.
-- Request Deduplication.
-
-### Day 25 – Android Performance and Scalability
-
-- Application Startup Optimization.
-- Memory Management.
-- Battery Optimization.
-- ANR.
-- Memory Leaks.
-- Background Processing.
-- Coroutines.
-- Flow.
-- Large List Optimization.
-- Paging 3.
-- Image Loading and Caching.
-
-### Day 26 – Android Real-Time Architecture
-
-- WebSockets on Android.
-- FCM.
-- Push Notification Architecture.
-- Foreground Services.
-- Background Restrictions.
-- Real-Time Data Updates.
-- Connection Management.
-- Reconnection Strategies.
-
-### Day 27 – Android Security and Reliability
-
-- Secure Token Storage.
-- Android Keystore.
-- Network Security Configuration.
-- Certificate Pinning (trade-offs and maintenance).
-- ProGuard/R8.
-- App Crash Handling.
-- Analytics.
-- Logging.
-- Feature Flags.
-- App Update Strategy.
-
-### Day 28 – Revision and Practice
-
-- Revise Android Architecture.
-- Explain MVVM and Clean Architecture.
-- Design an Offline-First application.
-- Explain Android networking.
-- Explain performance optimization.
-- Practice Senior Android interview questions.
-
----
-
-# PHASE 5: REAL-WORLD SYSTEM DESIGN INTERVIEW PRACTICE
-
-**Duration: Week 5**
-
-Goal: Apply everything learned to real-world system design problems.
-
-### Day 29 – Design a URL Shortener
-
-- Requirements.
-- HLD.
-- Database Design.
-- APIs.
-- Unique ID Generation.
-- Redirection Flow.
-- Caching.
-- Scalability.
-
-### Day 30 – Design WhatsApp / Chat Application
-
-- Requirements.
-- WebSockets.
-- Message Storage.
-- Message Delivery.
-- Message Acknowledgement.
-- Online/Offline Status.
-- Push Notifications.
-- Scaling Chat Services.
-
-### Day 31 – Design YouTube / Video Streaming
-
-- Video Upload.
-- Video Storage.
-- Video Processing.
-- CDN.
-- Video Streaming.
-- Metadata Database.
-- Search.
-- Scalability.
-
-### Day 32 – Design Instagram
-
-- User Profiles.
-- Image Upload.
-- Image Storage.
-- Feed Generation.
-- Following System.
-- Caching.
-- CDN.
-- Notifications.
-
-### Day 33 – Design Food Delivery Application
-
-- User Management.
-- Restaurant Management.
-- Order Management.
-- Location Tracking.
-- Real-Time Updates.
-- Payment Integration.
-- Notification System.
-
-### Day 34 – Design E-Commerce Application
-
-- Product Catalog.
-- Product Search.
-- Shopping Cart.
-- Order Management.
-- Payment Processing.
-- Inventory Management.
-- Caching.
-- Database Design.
-
-### Day 35 – Complete Mock Interview
-
-- Requirement Gathering.
-- Functional and Non-Functional Requirements.
-- Capacity Estimation.
-- HLD.
-- Database Design.
-- API Design.
-- Bottlenecks.
-- Scalability.
-- Trade-offs.
-- Final Architecture Explanation.
-
----
-
-# PHASE 6: INTERVIEW REVISION
-
-**Duration: Week 6**
-
-Goal: Become confident in explaining system design decisions during interviews.
-
-### Day 36 – HLD Revision
-
-- Architecture diagrams.
-- Monolith vs Microservices.
-- Load Balancers.
-- API Gateways.
-- Caching.
-- CDN.
-
-### Day 37 – Database Revision
-
-- SQL vs NoSQL.
-- Indexing.
-- Replication.
-- Sharding.
-- Partitioning.
-- CAP Theorem.
-
-### Day 38 – Distributed Systems Revision
-
-- Message Queues.
-- Kafka.
-- Eventual Consistency.
-- Idempotency.
-- Circuit Breaker.
-- Rate Limiting.
-
-### Day 39 – Android System Design Revision
-
-- MVVM.
-- Clean Architecture.
-- Offline-First.
-- Room.
-- WorkManager.
-- Retrofit.
-- Performance.
-
-### Day 40 – System Design Mock Interview 1
-
-Design a Chat Application.
-
-### Day 41 – System Design Mock Interview 2
-
-Design a Video Streaming Application.
-
-### Day 42 – Final Revision
-
-- Revise all notes.
-- Draw architectures without references.
-- Practice explaining trade-offs.
-- Identify weak concepts.
-- Prepare a final interview cheat sheet.
-
----
-
-# DAILY STUDY METHOD
-
-Follow this process every day.
-
-1. Understand the concept from scratch.
-2. Write beginner-friendly notes in Markdown.
-3. Understand real-world examples.
-4. Draw architecture diagrams wherever applicable.
+Yes\! Absolutely. We need those topics in our tracked roadmap. They are important, especially for your Senior Android Developer interviews.
+
+I noticed the problem: the earlier roadmap I gave you did not properly combine your original Phase 3, Phase 4, Phase 5 and Phase 6 syllabus with the three weeks we had already tracked.
+
+We should fix that instead of maintaining two separate roadmaps.
+
+## How we will organize everything
+
+There is one important conflict:
+
+- Your original tracked Week 3, Days 15–21 covers caching, CDN, storage, queues, load balancing and rate limiting.
+- Your earlier Phase 3, Days 15–21 covers microservices, distributed patterns, storage, search, real-time systems and observability.
+
+We should not replace your tracked Week 3. We will move the missing Phase 3 subjects into Week 4.
+
+This gives us a more complete roadmap.
+
+# Final consolidated system design roadmap
+
+# 7 Weeks · 49 Days
+
+Android Developer – 7 Years Experience
+
+Beginner to advanced system design and senior-level interview preparation.
+
+- Week 1–3: Your original tracked lessons.
+- Week 4: Advanced system design concepts.
+- Week 5: Android system design.
+- Week 6: Real-world system design interviews.
+- Week 7: Interview revision.
+
+## Week 1 – System Design Fundamentals
+
+Original tracked order – preserved| Day | Topic |
+| --- | --- |
+| 1 | Understanding System Design |
+| 2 | System Quality Attributes |
+| 3 | Client-Server and APIs |
+| 4 | Database Fundamentals – SQL vs NoSQL |
+| 5 | Caching and Pagination |
+| 6 | Notes Application System Design |
+
+## Week 2 – Scalability and Distributed Systems
+
+Original tracked order – preserved| Day | Topic |
+| --- | --- |
+| 7 | No separate lesson |
+| 8 | Load Balancing |
+| 9 | Database Scaling |
+| 10 | Distributed Systems Basics |
+| 11 | Message Queues and Event-Driven Architecture |
+| 12 | Consistency and Reliability |
+| 13 | Rate Limiting and API Gateway |
+| 14 | Complete Revision and System Design Interview Practice |
+
+## Week 3 – Backend Infrastructure and Performance
+
+Original tracked order – preserved| Day | Topic | File name |
+| --- | --- | --- |
+| 15 | Caching Fundamentals |  |
+| 16 | Cache Strategies and Cache Invalidation | `16-Cache-Strategies-and-Cache-Invalidation.md` |
+| 17 | CDN and Distributed Caching | `17-CDN-and-Distributed-Caching.md` |
+| 18 | File Storage and Object Storage | `18-File-Storage-and-Object-Storage.md` |
+| 19 | Message Queues and Asynchronous Processing | `19-Message-Queues-and-Asynchronous-Processing.md` |
+| 20 | Load Balancing and Reverse Proxy | `20-Load-Balancing-and-Reverse-Proxy.md` |
+| 21 | Rate Limiting and Throttling | `21-Rate-Limiting-and-Throttling.md` |
+
+## Week 4 – Advanced System Design Concepts
+
+This is where we incorporate your original Phase 3 syllabus.
+
+| Day | Topic | Important concepts |
+| --- | --- | --- |
+| 22 | Microservices Architecture | Monolith vs Microservices, Service Discovery, API Gateway, Inter-service Communication |
+| 23 | Distributed System Design Patterns | Circuit Breaker, Retry, Timeout, Bulkhead, Saga, CQRS, Event Sourcing |
+| 24 | Database Internals and Advanced Storage | SQL Internals, Indexing, B-Tree, Transactions, Normalization, Denormalization, Blob and Object Storage |
+| 25 | Search and Notification Systems | Full-Text Search, Elasticsearch, FCM, Push Notifications, Email, SMS, Delivery and Retry |
+| 26 | Real-Time Systems | Polling, Long Polling, SSE, WebSockets, Chat Architecture, Online/Offline Status |
+| 27 | Security and Observability | HTTPS, TLS, Encryption, Authentication, Authorization, Logging, Metrics, Tracing, Alerting |
+| 28 | Advanced System Design Revision | Microservices, Circuit Breaker, CQRS, Notification Architecture, Interview Practice |
+
+## Week 5 – Android System Design
+
+Your original Phase 4 syllabus, preserved and expanded.
+
+| Day | Topic | Important concepts |
+| --- | --- | --- |
+| 29 | Android Application Architecture | MVC, MVP, MVVM, MVI, Clean Architecture, SOLID, DI, Repository, Use Cases, Modularization |
+| 30 | Offline-First Architecture | Room, Local and Remote Data Sources, Repository, WorkManager, Sync, Conflict Resolution, Source of Truth |
+| 31 | Android Networking and API Architecture | Retrofit, OkHttp, Interceptors, Error Handling, Retry, Token Refresh, Pagination, Caching, Request Deduplication |
+| 32 | Android Performance and Scalability | Startup, Memory, Battery, ANR, Memory Leaks, Coroutines, Flow, Paging 3, Image Caching |
+| 33 | Android Real-Time Architecture | WebSockets, FCM, Foreground Services, Background Restrictions, Reconnection, Connection Management |
+| 34 | Android Security and Reliability | Keystore, Secure Token Storage, Network Security, Certificate Pinning, R8, Crash Handling, Analytics, Feature Flags |
+| 35 | Android Architecture Revision | MVVM, Clean Architecture, Offline-First Design, Networking, Performance and Interview Practice |
+
+## Week 6 – Real-World System Design Interview Practice
+
+Your original Phase 5 syllabus.
+
+| Day | Topic | Important concepts |
+| --- | --- | --- |
+| 36 | URL Shortener | Requirements, HLD, Database, APIs, Unique IDs, Redirection, Caching |
+| 37 | WhatsApp / Chat Application | WebSockets, Message Storage, Delivery, Acknowledgement, Online Status, Push Notifications |
+| 38 | YouTube / Video Streaming | Upload, Storage, Processing, CDN, Streaming, Metadata, Search |
+| 39 | Instagram | Profiles, Image Upload, Feed, Following, Caching, CDN, Notifications |
+| 40 | Food Delivery Application | Users, Restaurants, Orders, Location Tracking, Payments, Real-Time Updates |
+| 41 | E-commerce Application | Catalog, Search, Cart, Orders, Payments, Inventory, Caching, Database |
+| 42 | Complete Mock Interview | Requirements, Capacity Estimation, HLD, Database, APIs, Bottlenecks, Trade-offs |
+
+## Week 7 – Complete Interview Revision
+
+Your original Phase 6 syllabus.
+
+| Day | Topic |
+| --- | --- |
+| 43 | HLD Revision |
+| 44 | Database Revision |
+| 45 | Distributed Systems Revision |
+| 46 | Android System Design Revision |
+| 47 | System Design Mock Interview 1 – Chat Application |
+| 48 | System Design Mock Interview 2 – Video Streaming |
+| 49 | Final Revision and Interview Cheat Sheet |
+
+## Additional concepts we must not miss
+
+These are integrated into the appropriate lessons above rather than creating unnecessary extra days.
+
+| Concept | Where we cover it |
+| --- | --- |
+| DNS, IP, TCP and UDP | Day 31 and Day 43 |
+| HTTP, HTTPS and TLS | Day 27 and Day 31 |
+| Database Query Optimization | Day 24 and Day 44 |
+| Distributed Locks | Day 23 and Day 45 |
+| Docker and Containers | Day 22 and Day 42 |
+| High Availability and Disaster Recovery | Day 23 and Day 45 |
+| Distributed Transactions | Day 23 and Day 45 |
+| API Versioning | Day 31 |
+| Capacity and Cost Estimation | Day 42 |
+| Distributed Tracing | Day 27 and Day 45 |
+| Search Architecture | Day 25 |
+| WebSockets | Day 26 and Day 33 |
+| Database Isolation Levels | Day 24 and Day 44 |
+
+## Daily study method
+
+We will follow the same learning process for every lesson:
+
+1. Understand the concept from absolute basics.
+2. Create beginner-friendly Markdown notes.
+3. Explain with real-world examples.
+4. Draw architecture diagrams.
 5. Connect concepts to Android development.
-6. Practice interview questions.
-7. Explain the topic aloud without looking at notes.
-8. Revise previous topics for 10–15 minutes.
+6. Include important interview questions and answers.
+7. Add practical system design exercises.
+8. Finish with revision and a learning checklist.
 
----
+## Final tracking rules
 
-# IMPORTANT INTERVIEW EXPECTATIONS
+- Days 1–21 remain exactly as previously tracked.
+- Days 22–28 cover the missing advanced system design topics.
+- Days 29–35 cover Android system design.
+- Days 36–42 cover real-world application design.
+- Days 43–49 cover interview revision.
+- No existing lesson is silently deleted or renumbered.
 
-For a Senior Android Developer with 7 years of experience, prioritize:
+## Our current learning position
 
-- Android application architecture.
-- Offline-first architecture.
-- API communication.
-- Database design.
-- Caching.
-- Pagination.
-- Background synchronization.
-- Performance optimization.
-- Scalability.
-- Reliability.
-- Security.
-- Real-time communication.
-- System design trade-offs.
+Tracked through Day 14Week 3 – Day 15: Caching Fundamentals
 
-You should be able to explain not only what a technology does, but also why you selected it and what alternatives you considered.
+Next lesson: `Week-3-Day-15-Caching-Fundamentals.md`
 
----
+Final target: 49 days of structured learning.
 
-# FINAL GOAL
-
-By the end of this roadmap, I should be able to:
-
-- Understand system design concepts from beginner level.
-- Explain HLD and LLD.
-- Design scalable backend architectures.
-- Understand distributed systems.
-- Design Android applications end-to-end.
-- Handle offline synchronization.
-- Design databases and REST APIs.
-- Explain caching, pagination and load balancing.
-- Solve common system design interview problems.
-- Confidently explain architectural decisions in Senior Android interviews.
-
-**Target completion: 42 days**
-
-**Learning philosophy: Understand first. Take notes. Draw diagrams. Practice. Revise.**
-
-## My recommendation
-
-Since you have 7 years of Android experience, don't spend equal time on every topic.
-
-Give extra attention to:
-
-1. Android System Design – Your strongest interview advantage.
-2. Offline-first architecture – Room, WorkManager, synchronization and conflict resolution.
-3. Scalability and distributed systems – Understand the backend decisions even if you haven't implemented them yourself.
-4. Real-world design problems – Learn to explain complete architecture and trade-offs.
-
-Keep this roadmap as your master checklist. We can continue one day at a time, with beginner-friendly `.md` notes that you can save directly.
+This is the roadmap I recommend we maintain as our master roadmap from now on.
