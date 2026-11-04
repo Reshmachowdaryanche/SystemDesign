@@ -496,50 +496,206 @@ Database internal caching is different from an application-level cache such as R
 
 ## 5.4 CDN Caching
 
-CDN stands for Content Delivery Network.
+## What is CDN Caching?
 
-A CDN stores copies of content at geographically distributed locations.
+CDN caching is a technique of storing copies of website content on servers located in different geographical locations so that users can access that content faster.
 
-Example:
+First, let's understand what CDN means.
 
-Imagine an application displays the same profile image to users in India, the US and Europe.
+- CDN = Content Delivery Network.
+- Caching = Temporarily storing a copy of data so it can be accessed faster later.
 
-Instead of downloading the image from one origin server every time, a CDN can serve a cached copy from a nearby location.
+## 1. Understand with a real-world example
 
-Diagram:
+Imagine you build a Notes application and your main server is located in India.
+
+A user from the USA opens your application and requests an image stored on your server in India.
+
+Without CDN:
+
+1. The user requests the image.
+2. The request travels from the USA to your server in India.
+3. Your server sends the image back to the USA.
+4. The user waits for the image to load.
+
+This can take more time because of geographical distance and network latency.
+
+With CDN caching:
+
+1. The user requests the image.
+2. The request reaches a nearby CDN server in the USA.
+3. If the CDN already has a cached copy of the image, it sends it directly to the user.
+4. The image loads faster.
+
+Cloud Networking & CDN Guide - Wasil Zafar
+
+[wasilzafar.com](<https://www.wasilzafar.com/pages/series/cloud-computing/cloud-networking-cdn-guide.html?utm_source=chatgpt.com>)
+
+## 2. How does CDN caching work?
+
+There are two important terms:
+
+- Origin server: Your original server where the actual content is stored.
+- Edge server: A CDN server located closer to users.
+
+Let's understand the process.
+
+### Step 1: First user requests an image
+
+A user requests:
 
 text
 
 ```text
-              Origin Server
-                    |
-                    v
-                 CDN Network
-                /     |     \
-               v      v      v
-            India    USA   Europe
-             CDN     CDN    CDN
-               |      |      |
-               v      v      v
-            Users   Users  Users
+https://example.com/images/profile.jpg
 ```
 
-### What is useful to cache in a CDN?
+The CDN checks whether it already has a cached copy.
 
-- Images.
-- Videos.
-- CSS files.
-- JavaScript files.
-- Static documents.
-- Other cacheable public content.
+### Step 2: Cache miss
 
-### Benefits
+If the CDN doesn't have the image, it is called a Cache Miss.
 
-1. Faster content delivery.
-2. Reduced origin server load.
-3. Better global performance.
-4. Reduced bandwidth costs.
+The CDN requests the image from your origin server.
 
+### Step 3: CDN stores a copy
+
+The CDN receives the image and stores a cached copy on its edge server, according to its caching rules.
+
+### Step 4: Another user requests the same image
+
+Now another user requests the same image.
+
+The CDN already has the image stored.
+
+This is called a Cache Hit.
+
+The CDN sends the image directly without requesting it again from the origin server.
+
+How does CDN work - by Neo Kim
+
+[newsletter.systemdesign.one](<https://newsletter.systemdesign.one/p/how-does-cdn-work?utm_source=chatgpt.com>)
+
+## 3. What type of content can CDN cache?
+
+For a Notes application, CDN caching can be useful for:
+
+| Content | CDN caching |
+| --- | --- |
+| Profile pictures | Yes |
+| Uploaded images | Yes |
+| CSS files | Yes |
+| JavaScript files | Yes |
+| Fonts | Yes |
+| Videos | Yes |
+| Public documents | Yes |
+| Private user notes | Usually not publicly cached |
+
+For example, if 1,000 users access the same application logo, the CDN can serve cached copies instead of repeatedly requesting the logo from your origin server.
+
+## 4. What is Cache Hit and Cache Miss?
+
+| Term | Meaning |
+| --- | --- |
+| Cache Hit | Requested content is already available in the CDN cache. |
+| Cache Miss | Requested content is not available, so the CDN needs to retrieve it from the origin. |
+
+A higher cache hit ratio generally means fewer requests need to reach your origin server.
+
+## 5. What is Cache Expiration (TTL)?
+
+Imagine you upload a profile picture.
+
+The CDN stores a copy of that image.
+
+But later, you change your profile picture.
+
+What happens if the CDN still has the old image?
+
+The user might continue seeing the old image.
+
+To solve this, CDN caching uses TTL (Time To Live).
+
+TTL defines how long cached content can remain fresh.
+
+Example:
+
+http
+
+```http
+Cache-Control: public, max-age=3600
+```
+
+This tells caches that the response can be considered fresh for 3,600 seconds (1 hour), subject to the applicable caching rules.
+
+After that, the CDN may need to revalidate or retrieve a fresh copy.
+
+You can also use cache invalidation or purge to remove outdated cached content.
+
+## 6. Popular CDN providers
+
+Tải mẫu logo Cloudflare file vector AI, EPS, JPEG, SVG, PNG
+
+Cloudflare
+
+CDN, caching and web security services.
+
+[Official website](<https://www.cloudflare.com/?utm_source=chatgpt.com>)
+
+Amazon CloudFront | AWS Partner Network (APN) Blog
+
+Amazon CloudFront
+
+AWS content delivery network.
+
+[Official website](<https://aws.amazon.com/cloudfront/?utm_source=chatgpt.com>)
+
+Akamai Logo Vector File Free Download | Logowik
+
+Akamai
+
+Content delivery and edge computing services.
+
+[Official website](<https://www.akamai.com/?utm_source=chatgpt.com>)
+
+## 7. Why do we use CDN caching?
+
+The main advantages are:
+
+1. Faster loading: Content is delivered from servers closer to users.
+2. Reduced server load: Fewer requests reach your origin server.
+3. Reduced bandwidth usage: Repeated content can be served from CDN caches.
+4. Better user experience: Images, videos and static files load faster.
+5. Global availability: Users in different countries can access content efficiently.
+
+## 8. CDN caching in your Notes application
+
+Imagine your Notes application has:
+
+- 10 lakh users.
+- Profile pictures.
+- Uploaded images.
+- Attachments.
+- JavaScript and CSS files.
+
+Without a CDN, many requests for these files reach your main server.
+
+With a CDN:
+
+- Profile pictures can be served from CDN caches.
+- Uploaded public images can be served from nearby edge servers.
+- CSS and JavaScript files can be cached.
+- Your origin server handles fewer repeated requests.
+
+Important: Private notes and personal attachments should not be cached as publicly accessible content. If private content is cached, it needs carefully configured authorization, cache keys and access controls.
+
+## 9. Interview-ready answer
+
+If an interviewer asks, "What is CDN caching?", you can say:
+
+"CDN caching is a technique where copies of static content, such as images, CSS, JavaScript and videos, are stored on geographically distributed edge servers. When users request that content, it is served from a nearby CDN server instead of repeatedly fetching it from the origin server. This reduces latency, decreases origin server load and improves application performance."
+
+Remember thisCDN caching = Store content closer to users → Reduce network delay → Faster content delivery.
 ---
 
 # 6\. What is Redis?
