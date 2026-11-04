@@ -1839,77 +1839,446 @@ This skips the first 20 records and retrieves the next 10 records.
 
 # 16\. Cursor-Based Pagination
 
-## 16.1 First, Understand the Problem
+Here is a detailed explanation of Cursor Pagination using a Notes application, in the same format as Offset Pagination. You can save it as `cursor-pagination.md`.
 
-Imagine we have 10 million notes.
+Writing
 
-Using a large OFFSET may become inefficient.
+# Cursor Pagination in a Notes Application
 
-Can we request the next group of notes using the last record we already received?
+Let's understand **Cursor Pagination** using a Notes application where a user has created thousands or even millions of notes.
 
-Yes.
+Imagine Rahul opens his Notes application. Instead of loading all notes at once, the application displays 10 notes at a time.
 
-This is cursor-based pagination.
+When Rahul clicks Next or scrolls down, the application retrieves the next 10 notes.
 
-## 16.2 Definition
+This is called pagination.
 
-Cursor-based pagination uses a reference point, called a cursor, to determine where the next set of records should begin.
+**Cursor pagination** is a technique where the database retrieves the next set of records based on the position of the last record retrieved in the previous request.
 
-In simple words:
+Unlike offset pagination, it does not skip a specified number of records.
 
-Instead of telling the database how many records to skip, we tell it where to continue.
+Instead, it uses a cursor to identify where to continue reading.
 
-## 16.3 Notes Application Example
+---
 
-Suppose we have these notes:
+## 1\. Why do we need Cursor Pagination?
+
+Imagine Rahul has created 10 lakh (1 million) notes.
+
+If your backend retrieves all 10 lakh notes at once:
+
+- More data is transferred from the database.
+- More memory is required.
+- API responses become larger.
+- The application may take longer to load.
+
+We can use pagination to retrieve only 10 notes at a time.
+
+However, offset pagination can become expensive when users request pages far into a large dataset.
+
+Cursor pagination helps solve this problem.
+
+---
+
+## 2\. What is a Cursor?
+
+A cursor is a value that identifies a position in an ordered set of records.
+
+For example, imagine Rahul has these notes:
 
 | note\_id | title |
 | --- | --- |
 | 101 | Shopping |
-| 102 | Meeting |
-| 103 | Personal |
-| 104 | Work |
+| 102 | Study |
+| 103 | Meeting |
+| 104 | Project |
 | 105 | Travel |
+| 106 | Personal |
+| 107 | Work |
+| 108 | Ideas |
+| 109 | Books |
+| 110 | Movies |
+| 111 | Fitness |
+| 112 | Goals |
+| 113 | Finance |
+| 114 | Health |
+| 115 | Learning |
 
-We request the first three notes.
+Assume we want to display 5 notes at a time.
 
-Response:
-
-json
-
-```json
-{
-  "notes": [
-    {"id": 101, "title": "Shopping"},
-    {"id": 102, "title": "Meeting"},
-    {"id": 103, "title": "Personal"}
-  ],
-  "nextCursor": 103
-}
-```
-
-The cursor is 103.
-
-Now the client requests the next page:
+The first request retrieves:
 
 text
 
 ```text
-GET /notes?cursor=103&limit=3
+101, 102, 103, 104, 105
 ```
 
-The backend fetches records after ID 103.
+The last note retrieved has:
 
-SQL example:
+text
+
+```text
+note_id = 105
+```
+
+We use `105` as the cursor.
+
+When Rahul requests the next page, the database retrieves records after note ID 105.
+
+The next request returns:
+
+text
+
+```text
+106, 107, 108, 109, 110
+```
+
+Here, `105` is the cursor value.
+
+**Important:** The cursor is not necessarily the note ID. It can be a combination of sorting values, such as a timestamp and a unique ID.
+
+---
+
+## 3\. How does Cursor Pagination work?
+
+Assume the page size is 5.
+
+### First request
+
+The user requests the first 5 notes.
 
 sql
 
 ```sql
 SELECT *
-FROM notes
-WHERE note_id > 103
+FROM Notes
+WHERE user_id = 1
 ORDER BY note_id ASC
-LIMIT 3;
+LIMIT 5;
+```
+
+Result:
+
+text
+
+```text
+101 - Shopping
+102 - Study
+103 - Meeting
+104 - Project
+105 - Travel
+```
+
+The backend identifies the last note:
+
+text
+
+```text
+Last note ID = 105
+```
+
+It returns the notes and a next cursor:
+
+json
+
+```json
+{
+  "notes": [
+    {"note_id": 101, "title": "Shopping"},
+    {"note_id": 102, "title": "Study"},
+    {"note_id": 103, "title": "Meeting"},
+    {"note_id": 104, "title": "Project"},
+    {"note_id": 105, "title": "Travel"}
+  ],
+  "next_cursor": 105
+}
+```
+
+### Second request
+
+Now Rahul clicks Next.
+
+The frontend sends the cursor to the backend:
+
+http
+
+```http
+GET /api/notes?cursor=105&limit=5
+```
+
+The database executes:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 105
+ORDER BY note_id ASC
+LIMIT 5;
+```
+
+Result:
+
+text
+
+```text
+106 - Personal
+107 - Work
+108 - Ideas
+109 - Books
+110 - Movies
+```
+
+The new cursor becomes:
+
+text
+
+```text
+Last note ID = 110
+```
+
+### Third request
+
+The frontend sends:
+
+http
+
+```http
+GET /api/notes?cursor=110&limit=5
+```
+
+SQL:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 110
+ORDER BY note_id ASC
+LIMIT 5;
+```
+
+Result:
+
+text
+
+```text
+111 - Fitness
+112 - Goals
+113 - Finance
+114 - Health
+115 - Learning
+```
+
+The next cursor becomes:
+
+text
+
+```text
+115
+```
+
+Notice that we are not skipping records.
+
+We are telling the database:
+
+"Give me the next 5 records after note ID 110."
+
+---
+
+## 4\. Cursor Pagination Flowchart
+
+text
+
+```text
+             User Requests Notes
+                      |
+                      v
+               Backend Receives
+                 Request
+                      |
+                      v
+              Is Cursor Available?
+                      |
+                +-----+-----+
+                |           |
+               No          Yes
+                |           |
+                v           v
+          Fetch First    Fetch Notes
+          5 Notes        After Cursor
+                |           |
+                +-----+-----+
+                      |
+                      v
+              Return Notes
+                      |
+                      v
+          Identify Last Note ID
+                      |
+                      v
+             Generate Next Cursor
+                      |
+                      v
+             Return to Frontend
+                      |
+                      v
+             User Clicks Next
+                      |
+                      v
+             Send Next Cursor
+                      |
+                      v
+               Repeat Process
+```
+
+---
+
+## 5\. SQL Implementation Using PostgreSQL
+
+Let's implement cursor pagination using the `note_id` column.
+
+### First Page
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 5;
+```
+
+This retrieves the first 5 notes.
+
+### Second Page
+
+Suppose the last note ID from the previous response was 105.
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 105
+ORDER BY note_id ASC
+LIMIT 5;
+```
+
+This retrieves the next 5 notes after note ID 105.
+
+### Third Page
+
+Suppose the last note ID was 110.
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 110
+ORDER BY note_id ASC
+LIMIT 5;
+```
+
+This retrieves the next 5 notes after note ID 110.
+
+**Important:** The `note_id` should be unique and the ordering should be consistent.
+
+---
+
+## 6\. How does the Backend Handle Cursor Pagination?
+
+Imagine your frontend sends this API request:
+
+http
+
+```http
+GET /api/notes?limit=5
+```
+
+This means:
+
+- The user wants the first page.
+- The user wants 5 notes.
+- No cursor is provided.
+
+The backend retrieves the first 5 notes and returns a cursor.
+
+### Python Example
+
+python
+
+```python
+def get_notes(user_id, cursor=None, limit=5):
+
+    if cursor is None:
+
+        # First page
+        query = """
+            SELECT *
+            FROM Notes
+            WHERE user_id = %s
+            ORDER BY note_id ASC
+            LIMIT %s
+        """
+
+        notes = database.execute(
+            query,
+            (user_id, limit)
+        )
+
+    else:
+
+        # Next page
+        query = """
+            SELECT *
+            FROM Notes
+            WHERE user_id = %s
+            AND note_id > %s
+            ORDER BY note_id ASC
+            LIMIT %s
+        """
+
+        notes = database.execute(
+            query,
+            (user_id, cursor, limit)
+        )
+
+    # Generate next cursor
+    next_cursor = None
+
+    if notes:
+        next_cursor = notes[-1]["note_id"]
+
+    return {
+        "notes": notes,
+        "next_cursor": next_cursor
+    }
+```
+
+This is illustrative pseudocode.
+
+In production, fetch `limit + 1` records to determine whether another page exists, and generate the next cursor from the last record actually returned to the client.
+
+---
+
+## 7\. How Does the API Response Look?
+
+### First Request
+
+http
+
+```http
+GET /api/notes?limit=5
 ```
 
 Response:
@@ -1919,29 +2288,377 @@ json
 ```json
 {
   "notes": [
-    {"id": 104, "title": "Work"},
-    {"id": 105, "title": "Travel"}
+    {"note_id": 101, "title": "Shopping"},
+    {"note_id": 102, "title": "Study"},
+    {"note_id": 103, "title": "Meeting"},
+    {"note_id": 104, "title": "Project"},
+    {"note_id": 105, "title": "Travel"}
   ],
-  "nextCursor": null
+  "next_cursor": 105,
+  "has_more": true
 }
 ```
 
-There are no more records.
+### Second Request
 
-## 16.4 Advantages
+http
 
-1. Efficient for large datasets when supported by suitable indexes.
-2. Avoids large OFFSET scans.
-3. Works well with infinite scrolling.
-4. Handles many insertions more predictably when using a stable ordering key.
+```http
+GET /api/notes?cursor=105&limit=5
+```
 
-## 16.5 Disadvantages
+Response:
 
-1. Directly jumping to page 100 can be difficult.
-2. Implementation is more complex.
-3. Cursor design must be carefully chosen.
-4. Sorting and filtering need to be consistent.
+json
 
+```json
+{
+  "notes": [
+    {"note_id": 106, "title": "Personal"},
+    {"note_id": 107, "title": "Work"},
+    {"note_id": 108, "title": "Ideas"},
+    {"note_id": 109, "title": "Books"},
+    {"note_id": 110, "title": "Movies"}
+  ],
+  "next_cursor": 110,
+  "has_more": true
+}
+```
+
+### Third Request
+
+http
+
+```http
+GET /api/notes?cursor=110&limit=5
+```
+
+Response:
+
+json
+
+```json
+{
+  "notes": [
+    {"note_id": 111, "title": "Fitness"},
+    {"note_id": 112, "title": "Goals"},
+    {"note_id": 113, "title": "Finance"},
+    {"note_id": 114, "title": "Health"},
+    {"note_id": 115, "title": "Learning"}
+  ],
+  "next_cursor": 115,
+  "has_more": false
+}
+```
+
+Now there are no more notes to retrieve.
+
+---
+
+## 8\. Advantages of Cursor Pagination
+
+### Reason 1: Better performance with large datasets
+
+Imagine Rahul has 10 lakh notes.
+
+With offset pagination, requesting a later page might require the database to process and discard many preceding records.
+
+With cursor pagination, the database can seek to the cursor position using an appropriate index and retrieve the next records.
+
+For example:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 99990
+ORDER BY note_id ASC
+LIMIT 10;
+```
+
+With a suitable index, this can be much more efficient than a large OFFSET.
+
+### Reason 2: More stable when new records are inserted
+
+Imagine Rahul has these notes:
+
+text
+
+```text
+101 - Shopping
+102 - Study
+103 - Meeting
+104 - Project
+105 - Travel
+106 - Personal
+107 - Work
+108 - Ideas
+109 - Books
+110 - Movies
+```
+
+The first page returns:
+
+text
+
+```text
+101, 102, 103, 104, 105
+```
+
+The cursor is:
+
+text
+
+```text
+105
+```
+
+Now another user inserts a new note at the beginning of the list.
+
+The database now contains:
+
+text
+
+```text
+100 - New Note
+101 - Shopping
+102 - Study
+103 - Meeting
+104 - Project
+105 - Travel
+106 - Personal
+107 - Work
+108 - Ideas
+109 - Books
+110 - Movies
+```
+
+Rahul requests the next page using:
+
+sql
+
+```sql
+WHERE note_id > 105
+```
+
+He receives:
+
+text
+
+```text
+106, 107, 108, 109, 110
+```
+
+The previously displayed note 105 is not repeated.
+
+This is an advantage of cursor pagination.
+
+**Note:** Cursor pagination reduces shifting caused by new records before the cursor, but it does not guarantee a completely consistent snapshot if records are deleted or their sort values change between requests.
+
+### Reason 3: Suitable for infinite scrolling
+
+Imagine Rahul scrolls through his notes.
+
+Instead of clicking page numbers:
+
+1. The application loads the first 10 notes.
+2. Rahul scrolls down.
+3. The application requests the next 10 using the cursor.
+4. The process continues.
+
+This is called infinite scrolling.
+
+Cursor pagination is particularly suitable for this experience.
+
+---
+
+## 9\. Disadvantages of Cursor Pagination
+
+### Reason 1: Cannot easily jump to a particular page
+
+With offset pagination, the user can directly request page 50.
+
+http
+
+```http
+GET /api/notes?page=50&limit=10
+```
+
+With cursor pagination, the application generally needs the cursor corresponding to the position it wants to continue from.
+
+Therefore, direct page-number navigation is more difficult.
+
+### Reason 2: More complex implementation
+
+You need to:
+
+- Generate cursors.
+- Send cursors between frontend and backend.
+- Validate cursor values.
+- Maintain consistent sorting.
+- Handle next and previous navigation.
+
+### Reason 3: Sorting requires care
+
+Suppose notes are sorted by creation time.
+
+Two notes might have exactly the same timestamp.
+
+To avoid ambiguity, use a unique tie-breaker such as `note_id`.
+
+For example:
+
+sql
+
+```sql
+ORDER BY created_at DESC, note_id DESC
+```
+
+Your cursor should contain both values.
+
+---
+
+## 10\. Cursor Pagination Using Created At
+
+Sometimes, you don't want to sort notes using `note_id`.
+
+Instead, you want to show the newest notes first.
+
+For that, you can use `created_at` and `note_id` together.
+
+Example:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+ORDER BY created_at DESC, note_id DESC
+LIMIT 5;
+```
+
+Suppose the last record returned has:
+
+text
+
+```text
+created_at = 2026-11-04 10:30:00
+note_id = 105
+```
+
+The next page query becomes:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND (created_at, note_id) < (
+    '2026-11-04 10:30:00',
+    105
+)
+ORDER BY created_at DESC, note_id DESC
+LIMIT 5;
+```
+
+Why use both columns?
+
+Because multiple notes can have the same creation timestamp.
+
+The unique `note_id` helps establish an unambiguous order.
+
+You should create a suitable composite index:
+
+sql
+
+```sql
+CREATE INDEX idx_notes_user_created_id
+ON Notes(user_id, created_at DESC, note_id DESC);
+```
+
+---
+
+## 11\. Offset Pagination vs Cursor Pagination
+
+| Feature | Offset Pagination | Cursor Pagination |
+| --- | --- | --- |
+| How it works | Skips records | Starts after a known record |
+| Page navigation | Supports direct page numbers | Usually uses Next/Previous |
+| Large datasets | Can become expensive | Generally more efficient |
+| New record insertion | Can cause duplicates or missing records | More stable |
+| Implementation | Simple | Slightly more complex |
+| Infinite scrolling | Possible | Excellent fit |
+
+### When should you use each?
+
+**Use Offset Pagination when:**
+
+- Your dataset is relatively small or moderate.
+- Users need page numbers.
+- Users need to jump directly to a particular page.
+- Simple implementation is important.
+
+**Use Cursor Pagination when:**
+
+- Your application has a large dataset.
+- Users frequently scroll through records.
+- You want more stable pagination when new records are inserted.
+- You need efficient next-page retrieval.
+
+---
+
+## 12\. Final Interview Answer
+
+**What is Cursor Pagination?**
+
+Cursor pagination is a technique used to retrieve records based on the position of the last record returned in the previous request.
+
+Instead of skipping records using OFFSET, it uses a cursor value to identify where the next query should continue.
+
+Example:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+AND note_id > 105
+ORDER BY note_id ASC
+LIMIT 10;
+```
+
+This retrieves the next 10 notes after note ID 105.
+
+**Advantages:**
+
+- Efficient for large datasets.
+- Avoids scanning and discarding large numbers of preceding records.
+- More stable when new records are inserted before the cursor.
+- Excellent for infinite scrolling.
+
+**Disadvantages:**
+
+- Cannot easily jump to an arbitrary page number.
+- Slightly more complex to implement.
+- Requires consistent sorting and cursor management.
+
+**Key takeaway:**
+
+Cursor pagination is generally a better choice for large datasets and infinite scrolling, while offset pagination is simpler when users need traditional page-number navigation.
+
+## Important concept to remember
+
+For your Notes application:
+
+- Offset pagination: `LIMIT 10 OFFSET 20` — skip 20 notes and retrieve 10.
+- Cursor pagination: `WHERE note_id > 105 LIMIT 10` — retrieve 10 notes after note 105.
+
+The second approach can use an index to locate the next records efficiently, even when the Notes table contains millions of records.
 ---
 
 # 17\. Why Do We Need a Unique Ordering for Pagination?
