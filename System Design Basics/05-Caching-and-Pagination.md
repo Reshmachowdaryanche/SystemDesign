@@ -1388,20 +1388,131 @@ The application fetches more notes when the user scrolls.
 
 # 15\. Offset-Based Pagination
 
-## 15.1 Definition
+You can copy the complete content below and save it as `offset-pagination.md`.
 
-Offset-based pagination retrieves a limited number of records while skipping a specified number of records.
+Writing
 
-Two important parameters:
+# Offset Pagination in a Notes Application
 
-- LIMIT: Number of records to return.
-- OFFSET: Number of records to skip.
+Let's understand **Offset Pagination** using a Notes application where a user has created 100 notes.
 
-## 15.2 Example
+Imagine Rahul opens his Notes application. Instead of displaying all 100 notes at once, we display only 10 notes per page.
 
-Imagine we have 100 notes.
+This is called pagination.
 
-We want to retrieve 10 notes per page.
+**Offset pagination** is a technique where we skip a specified number of records and retrieve the next set of records.
+
+## 1\. Why do we need pagination?
+
+Imagine Rahul has created 10,000 notes.
+
+If your backend retrieves all 10,000 notes at once:
+
+- More data is transferred from the database.
+- More memory is required.
+- The API response becomes larger.
+- The application may take longer to load.
+
+Instead, we retrieve only 10 notes at a time.
+
+For example:
+
+| Page | Notes displayed |
+| --- | --- |
+| Page 1 | Notes 1–10 |
+| Page 2 | Notes 11–20 |
+| Page 3 | Notes 21–30 |
+| Page 4 | Notes 31–40 |
+
+This improves the efficiency of data retrieval.
+
+## 2\. What is Offset?
+
+Offset means **the number of records you want to skip before retrieving the next records.**
+
+Suppose we have these notes:
+
+| note\_id | title |
+| --- | --- |
+| 101 | Shopping |
+| 102 | Study |
+| 103 | Meeting |
+| 104 | Project |
+| 105 | Travel |
+| 106 | Personal |
+| 107 | Work |
+| 108 | Ideas |
+| 109 | Books |
+| 110 | Movies |
+| 111 | Fitness |
+| 112 | Goals |
+| 113 | Finance |
+| 114 | Health |
+| 115 | Learning |
+
+Assume we want to display 5 notes per page.
+
+- Page 1: Skip 0 records and retrieve 5.
+- Page 2: Skip 5 records and retrieve 5.
+- Page 3: Skip 10 records and retrieve 5.
+
+Here:
+
+- **LIMIT** = Number of records to retrieve.
+- **OFFSET** = Number of records to skip.
+
+## 3\. How does Offset Pagination work?
+
+### Page 1
+
+text
+
+```text
+OFFSET = 0
+LIMIT  = 5
+
+1. Shopping
+2. Study
+3. Meeting
+4. Project
+5. Travel
+```
+
+### Page 2
+
+text
+
+```text
+OFFSET = 5
+LIMIT  = 5
+
+6. Personal
+7. Work
+8. Ideas
+9. Books
+10. Movies
+```
+
+### Page 3
+
+text
+
+```text
+OFFSET = 10
+LIMIT  = 5
+
+11. Fitness
+12. Goals
+13. Finance
+14. Health
+15. Learning
+```
+
+Notice that each page skips the records displayed on previous pages.
+
+## 4\. SQL implementation using PostgreSQL
+
+PostgreSQL supports `LIMIT` and `OFFSET`.
 
 ### Page 1
 
@@ -1409,13 +1520,14 @@ sql
 
 ```sql
 SELECT *
-FROM notes
-ORDER BY note_id
-LIMIT 10
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 5
 OFFSET 0;
 ```
 
-Returns records 1–10.
+This retrieves the first 5 notes belonging to Rahul.
 
 ### Page 2
 
@@ -1423,13 +1535,14 @@ sql
 
 ```sql
 SELECT *
-FROM notes
-ORDER BY note_id
-LIMIT 10
-OFFSET 10;
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 5
+OFFSET 5;
 ```
 
-Returns records 11–20.
+This skips the first 5 notes and retrieves the next 5.
 
 ### Page 3
 
@@ -1437,55 +1550,291 @@ sql
 
 ```sql
 SELECT *
-FROM notes
-ORDER BY note_id
-LIMIT 10
-OFFSET 20;
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 5
+OFFSET 10;
 ```
 
-Returns records 21–30.
+This skips the first 10 notes and retrieves the next 5.
 
-## 15.3 Understanding LIMIT and OFFSET
+**Important:** Always use `ORDER BY` when implementing pagination. Otherwise, the database is not required to return records in a consistent order.
 
-Suppose:
+## 5\. How do we calculate the OFFSET?
+
+This is an important interview question.
+
+The formula is:
+
+text
+
+```text
+OFFSET = (Page Number - 1) * Page Size
+```
+
+Where:
+
+- Page Number = The page requested by the user.
+- Page Size = Number of records per page.
+
+Let's assume the page size is 10.
+
+| Page number | Calculation | Offset |
+| --- | --- | --- |
+| 1 | (1 - 1) × 10 | 0 |
+| 2 | (2 - 1) × 10 | 10 |
+| 3 | (3 - 1) × 10 | 20 |
+| 4 | (4 - 1) × 10 | 30 |
+| 5 | (5 - 1) × 10 | 40 |
+
+For example, if Rahul requests page 4, the backend calculates:
+
+text
+
+```text
+(4 - 1) * 10 = 30
+```
+
+Then it executes:
 
 sql
 
 ```sql
-LIMIT 10 OFFSET 20
+SELECT *
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 10
+OFFSET 30;
 ```
 
-Meaning:
+The database skips 30 records and returns the next 10.
 
-1. Skip the first 20 matching records.
-2. Return the next 10 records.
+## 6\. How does the backend handle pagination?
 
-## 15.4 Advantages
+Imagine your frontend sends this API request:
 
-1. Easy to understand.
-2. Easy to implement.
-3. Supports direct page navigation.
-4. Useful for small and relatively stable datasets.
+http
 
-## 15.5 Disadvantages
+```http
+GET /api/notes?page=2&limit=10
+```
 
-Imagine the user requests page 10,000.
+This means:
 
-The database may need to process or traverse many preceding rows before returning the requested page.
+- `page=2`: User wants the second page.
+- `limit=10`: User wants 10 notes per page.
 
-This can become inefficient for large offsets.
+Your backend receives the request and calculates the offset.
 
-Another problem is changing data.
+### Python Example
 
-Imagine:
+python
 
-1. User loads page 1.
-2. New notes are inserted.
-3. User loads page 2.
-4. Some records may be repeated or skipped depending on ordering and where records were inserted.
+```python
+def get_notes(user_id, page, limit):
 
-This is one reason offset pagination can be problematic for continuously changing datasets.
+    offset = (page - 1) * limit
 
+    notes = database.execute("""
+        SELECT *
+        FROM Notes
+        WHERE user_id = %s
+        ORDER BY note_id ASC
+        LIMIT %s OFFSET %s
+    """, (user_id, limit, offset))
+
+    return notes
+```
+
+For page 2:
+
+text
+
+```text
+page = 2
+limit = 10
+
+offset = (2 - 1) * 10
+
+offset = 10
+```
+
+The database skips 10 records and retrieves the next 10.
+
+## 7\. Disadvantages of Offset Pagination
+
+Offset pagination is easy to implement, but it has some limitations.
+
+### Reason 1: Performance problems with large offsets
+
+Imagine Rahul has 10 lakh notes.
+
+He requests page 10,000 with 10 notes per page.
+
+The calculation is:
+
+text
+
+```text
+(10000 - 1) * 10 = 99990
+```
+
+SQL:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+ORDER BY note_id ASC
+LIMIT 10
+OFFSET 99990;
+```
+
+The database may need to walk through and discard a large number of rows before returning the requested 10.
+
+This can become expensive as the offset increases.
+
+### Reason 2: Duplicate or missing records when new notes are inserted
+
+Imagine Rahul is viewing page 2.
+
+Initially:
+
+| Position | Note |
+| --- | --- |
+| 1 | Shopping |
+| 2 | Study |
+| 3 | Meeting |
+| 4 | Project |
+| 5 | Travel |
+| 6 | Personal |
+| 7 | Work |
+| 8 | Ideas |
+| 9 | Books |
+| 10 | Movies |
+
+Assume the page size is 5.
+
+Rahul views page 1, which contains the first five notes.
+
+Now another note is inserted at the beginning:
+
+| Position | Note |
+| --- | --- |
+| 1 | New Note |
+| 2 | Shopping |
+| 3 | Study |
+| 4 | Meeting |
+| 5 | Project |
+| 6 | Travel |
+| 7 | Personal |
+| 8 | Work |
+| 9 | Ideas |
+| 10 | Books |
+| 11 | Movies |
+
+Now Rahul requests page 2 using `OFFSET 5 LIMIT 5`.
+
+He receives:
+
+- Travel
+- Personal
+- Work
+- Ideas
+- Books
+
+The problem is that Rahul already saw Travel on page 1 before the new note was inserted.
+
+Now Travel appears again.
+
+This is called a pagination consistency problem.
+
+## 8\. How can we improve Offset Pagination?
+
+- Create indexes on columns used for filtering and sorting.
+- Use a consistent `ORDER BY` with a unique tie-breaker.
+- Limit the maximum page size.
+- Consider cursor pagination for very large datasets.
+- Use an appropriate transaction isolation level if consistent multi-page snapshots are required.
+
+For example:
+
+sql
+
+```sql
+CREATE INDEX idx_notes_user_id_note_id
+ON Notes(user_id, note_id);
+```
+
+This index can help queries that filter by `user_id` and order by `note_id`.
+
+## 9\. Offset Pagination vs Cursor Pagination
+
+There are two common approaches to pagination.
+
+| Feature | Offset Pagination | Cursor Pagination |
+| --- | --- | --- |
+| How it works | Skips records | Starts after a known record |
+| Page navigation | Supports direct page numbers | Usually uses Next/Previous |
+| Large datasets | Can become expensive | Generally more efficient |
+| New record insertion | Can cause duplicates or missing records | More stable |
+| Implementation | Simple | Slightly more complex |
+
+For a Notes application:
+
+- Offset pagination is suitable for small and medium datasets where users need page numbers.
+- Cursor pagination is often better for large datasets and infinite scrolling.
+
+## 10\. Final Interview Answer
+
+**What is Offset Pagination?**
+
+Offset pagination is a technique used to retrieve a specific subset of records from a database by skipping a certain number of records and fetching the next specified number.
+
+It uses two main parameters:
+
+- LIMIT: Number of records to retrieve.
+- OFFSET: Number of records to skip.
+
+Formula:
+
+text
+
+```text
+OFFSET = (Page Number - 1) * Page Size
+```
+
+Example:
+
+sql
+
+```sql
+SELECT *
+FROM Notes
+WHERE user_id = 1
+ORDER BY note_id ASC
+LIMIT 10
+OFFSET 20;
+```
+
+This skips the first 20 records and retrieves the next 10 records.
+
+**Advantages:**
+
+- Simple to implement.
+- Supports direct page navigation.
+- Useful for small and medium datasets.
+
+**Disadvantages:**
+
+- Large offsets can cause performance problems.
+- New records inserted between page requests can cause duplicate or missing records.
+- Requires consistent ordering.
+
+**Key takeaway:** Offset pagination is easy to implement, but for applications with millions of records or infinite scrolling, cursor pagination is often a better choice.
 ---
 
 # 16\. Cursor-Based Pagination
